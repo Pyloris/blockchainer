@@ -1,2 +1,1 @@
-from .blockchain import BlockChain
-from .miner import Miner
+from .Wallet import Wallet
