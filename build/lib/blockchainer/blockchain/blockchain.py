@@ -8,7 +8,7 @@ class BlockChain:
         # blocks stored sequentially
         self.blocks = []
 
-    def create_block(self, transactions:list):
+    def create_block(self, id:int, nonce:int, prev_hash:str, transactions:list):
         if len(self.blocks) == 0:
             # create genisis Block
             self.new_block = Block(0, 0, 0, transactions)
@@ -37,13 +37,3 @@ class Block:
         inner_hash = sha256(header_bin).hexdigest().encode()
         outer_hash = sha256(inner_hash).hexdigest()
         return outer_hash
-
-    # print data inside block and about block
-    def print_data(self):
-        print(f"[Id] {self.id}\t\t[Prev Hash] {self.prev_hash}")
-        print(f"[Nonce] {self.nonce}")
-        print(f"[Block Hash] {self.block_hash}")
-        print(f"\t[Transactions]\t")
-        for tx in self.transactions:
-            print(tx)
-        
