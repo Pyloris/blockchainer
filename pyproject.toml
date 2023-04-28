@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blockchainer"
+version = "0.0.1"
+authors = [{name = "shoaib wani", email="wanishoaib@protonmail.com"}]
+description = "A python Module to quickly implement blockchain features to learn them how they work"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["blockchain", "cryptocurrency", "learn"]
+license = {text="MIT"}
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "ecdsa",
+    "pycryptodome",
+]
+
+[project.urls]
+Homepage = "https://github.com/pyloris/blockchainer"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+blockchainer = "blockchainer.__main__:blockchain"
