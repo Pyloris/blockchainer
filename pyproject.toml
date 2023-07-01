@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [{name = "shoaib wani", email="wanishoaib@protonmail.com"}]
 description = "A python Module to quickly implement blockchain features to learn them how they work"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.6"
 keywords = ["blockchain", "cryptocurrency", "learn"]
 license = {text="MIT"}
 classifiers = [

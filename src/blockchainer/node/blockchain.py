@@ -1,80 +1,66 @@
-from datetime import datetime
+import json
+from Crypto.Hash import SHA256
 
+from rich import pretty
+from rich.console import Console
+import time
+
+from rich.live import Live
+from rich.table import Table
 
 
 class Blockchain:
-    """
-    A Blueprint for the Blockchain database.
-    - Provides API to interact with Blockchain
-    
-    - Blockchain is essentially a list of dictionaries(transactions).
-    """
     
     def __init__(self):
-        
-        # empty blockchain
+
+        # for storing the blockchain
         self.blockchain = []
         
         # store all the unspent transaction outputs
-        self.utxo = []
+        self.utxo = {}
+
+        # net value of crypto
+        self.net_value = 0
 
     
+    def last_blk_hash(self):
+        # return hash of last block
+        if self.blockchain:
+            return self.blockchain[-1]['body']['hash']
+        else:
+            return 0
+    
+
+    # add block to blockchain
+    def add_block(self, _block):
+        hash_value = SHA256.new(data=bytes(json.dumps(_block['header']), 'utf-8')).hexdigest()
+        if hash_value == _block['body']['hash']:
+            self.blockchain.append(_block)
+            self.net_value+=6.25
+
+            # also populate the UTXO with the transactions
+            for tx in _block['body']['tx']:
+                self.utxo[tx['hash_id']] = tx
 
 
+    def get_utxo(self):
+        return self.utxo
+    
+    def rm_tx_from_utxo(self, tx_hash):
+        del self.utxo[tx_hash]
+    
 
+    # print the blockchain
+    def print_all(self):
+        pretty.install()
+        console = Console()
 
-class Block:
-    """
-    A blueprint for a block that stores transactions.
-    
-    Block Header Structure:
-    {
-        'previous block hash',
-        'merkle root',
-        'timestamp' - creation time in unix epoch,
-        'difficulty target' - no of zeros at start of hash
-        'Nonce' - counter for PoW algorithm
-    }
-    
-    Block
-    {
-        'hash': 4589f83934, - hash of current block header
-        'header fields included here',
-        'tx': [
-            'tx1',
-            'tx2'
-        ]
-    }
-    """
-    
-    def __init__(self, transactions: list, blockchain):
-        self.header = {}
-        self.body = {}
-        self.blockchain = blockchain
-        self.transactions = transactions
-        
-        
-    def create_block(self):
-        
-        # create the header
-        self.header['previous_block_hash'] = self.blockchain.get_tx_hashes()[-1]
-        self.header['timestamp'] = datetime.timestamp()
-        self.header['difficulty_target'] = 2
-        self.header['merkle_root'] = self.get_merkle_root()
-        self.header['nonce'] = 0
+        table = Table()
+        table.add_column('UTXO')
 
+        with Live(table, refresh_per_second=5):
+            for tx in self.utxo.values():
+                time.sleep(0.5)
+                table.add_row(tx['hash_id'])
         
-        # create body
-        self.body['hash'] = self.get_header_hash()
-        self.body['tx'] = self.transactions
-        
-        
-        
-    def get_header_hash(self):
-        # combine all the header values and convert them to raw bytes of specified lengths
-        # use double sha256 to find the hash
-        pass
-    
-    
-    def get_merkle_root(self):
-        pass
+        console.print("NET VALUE : "+str(self.net_value))
