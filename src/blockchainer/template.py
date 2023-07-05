@@ -15,12 +15,12 @@ class Transaction:
 
         self.transaction['u_inputs'] = spended
 
-        self.transaction['sign'] = signature
+        self.transaction['sign'] = signature[:12]
 
         # generate change as well
         self.transaction['output'] = [{
             'value':amount,
-            'address':receiver
+            'address':receiver[:12]
         }, *outputs]
         
         self.transaction['hash_id'] = self.get_tx_hash()
@@ -33,12 +33,12 @@ class Transaction:
         tx['inputs'] = [{'tx_type':'coinbase', 'nonce':str(random.randint(0,100000))}]
         tx['output'] = [{
             'value':reward,
-            'address':address
+            'address':address[:12]
         }]
 
         str_tx = json.dumps(tx)
 
-        tx['hash_id'] = SHA256.new(data=bytes(str_tx, 'utf-8')).hexdigest()
+        tx['hash_id'] = str(SHA256.new(data=bytes(str_tx, 'utf-8')).hexdigest())[:12]
 
         return tx
 
@@ -49,7 +49,7 @@ class Transaction:
         concat_tx = '\n'.join(map(json.dumps, all_tx))
 
         # hash the transactions
-        hash_value = SHA256.new(data=bytes(concat_tx, 'utf-8')).hexdigest()
+        hash_value = str(SHA256.new(data=bytes(concat_tx, 'utf-8')).hexdigest())[:12]
 
         return hash_value
     
@@ -61,7 +61,7 @@ class Transaction:
         self.transaction['output'][0]['value'] - value
         self.transaction['output'].append({
             'value':value,
-            'address':address
+            'address':address[:12]
         })
 
 
@@ -75,7 +75,7 @@ class Block:
 
         # create the block
         self.header = {
-            'previous_block_hash':prev_block_hash,
+            'previous_block_hash':str(prev_block_hash)[:12],
             'timestamp' : datetime.timestamp(datetime.now()),
             'difficulty_target' : difficulty,
             'merkle_root' : self.get_merkle_root(),

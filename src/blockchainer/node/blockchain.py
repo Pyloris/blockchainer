@@ -33,7 +33,7 @@ class Blockchain:
 
     # add block to blockchain
     def add_block(self, _block):
-        hash_value = SHA256.new(data=bytes(json.dumps(_block['header']), 'utf-8')).hexdigest()
+        hash_value = SHA256.new(data=bytes(json.dumps(_block['header']), 'utf-8')).hexdigest()[:12]
         if hash_value == _block['body']['hash']:
             self.blockchain.append(_block)
             self.net_value+=6.25
@@ -55,12 +55,14 @@ class Blockchain:
         pretty.install()
         console = Console()
 
-        table = Table()
-        table.add_column('UTXO')
+        # table = Table()
+        # table.add_column('UTXO')
 
-        with Live(table, refresh_per_second=5):
-            for tx in self.utxo.values():
-                time.sleep(0.5)
-                table.add_row(tx['hash_id'])
+        # with Live(table, refresh_per_second=5):
+        #     for tx in self.utxo.values():
+        #         time.sleep(0.5)
+        #         table.add_row(tx['hash_id'])
         
-        console.print("NET VALUE : "+str(self.net_value))
+        # console.print("NET VALUE : "+str(self.net_value))
+
+        console.print(self.blockchain)

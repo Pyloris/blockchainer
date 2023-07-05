@@ -6,44 +6,43 @@ from .template import Block
 
 def blockchain():
 
-    blockchain = Blockchain()
-
     wallet = Wallet('key.file')
     
     miner = Miner()
-    miner.bind(blockchain)
 
-    block = Block(blockchain.last_blk_hash(), []).get_block()
+    miner.wallet(wallet)
 
-    mined = miner.mine(block, wallet.address)
-    blockchain.add_block(mined)
+    block = Block(miner.blockchain.last_blk_hash(), []).get_block()
 
-    tx = wallet.send(1, '582948', blockchain.get_utxo())
+    mined = miner.mine(block)
+    miner.blockchain.add_block(mined)
 
-    miner.add_to_pool(tx)
-
-    block = Block(blockchain.last_blk_hash(), miner.flush_pool()).get_block()
-    mined = miner.mine(block, wallet.address)
-    blockchain.add_block(block)
-
-    tx = wallet.send(4, '782439', blockchain.get_utxo())
+    tx = wallet.send(1, '582948', miner.blockchain.get_utxo())
 
     miner.add_to_pool(tx)
 
-    block = Block(blockchain.last_blk_hash(), miner.flush_pool()).get_block()
-    mined = miner.mine(block, wallet.address)
-    blockchain.add_block(block)
+    block = Block(miner.blockchain.last_blk_hash(), miner.flush_pool()).get_block()
+    mined = miner.mine(block)
+    miner.blockchain.add_block(block)
 
-    tx = wallet.send(5, '948493', blockchain.get_utxo())
+    tx = wallet.send(4, '782439', miner.blockchain.get_utxo())
+
     miner.add_to_pool(tx)
 
-    tx = wallet.send(5, '232423', blockchain.get_utxo())
+    block = Block(miner.blockchain.last_blk_hash(), miner.flush_pool()).get_block()
+    mined = miner.mine(block)
+    miner.blockchain.add_block(block)
+
+    tx = wallet.send(5, '948493', miner.blockchain.get_utxo())
+    miner.add_to_pool(tx)
+
+    tx = wallet.send(5, '232423', miner.blockchain.get_utxo())
     miner.add_to_pool(tx)
 
 
-    block = Block(blockchain.last_blk_hash(), miner.flush_pool()).get_block()
-    mined = miner.mine(block, wallet.address)
-    blockchain.add_block(mined)
+    block = Block(miner.blockchain.last_blk_hash(), miner.flush_pool()).get_block()
+    mined = miner.mine(block)
+    miner.blockchain.add_block(mined)
 
 
-    blockchain.print_all()
+    miner.blockchain.print_all()

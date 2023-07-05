@@ -10,11 +10,13 @@ from .signer import setup_verifier, sign
 
 class Wallet:
     
-    def __init__(self, filename):
+    def __init__(self, filename, rand=False):
         
         # if file is given reaR̥d the key
-        if path.exists(filename):
+        if not rand and path.exists(filename):
             self.key = ECC.import_key(open(filename, 'rt').read())
+        elif rand:
+            self.key = ECC.generate(curve='P-256')
         else:
             # generate key pair
             self.key = ECC.generate(curve='P-256')
@@ -28,7 +30,7 @@ class Wallet:
         self.public_key = self.key.public_key().export_key(format='DER').hex()[2:]
 
         # address
-        self.address = SHA256.new(data=bytes(self.public_key, 'utf-8')).hexdigest()
+        self.address = str(SHA256.new(data=bytes(self.public_key, 'utf-8')).hexdigest())[:8]
 
         # setup verifier
         setup_verifier(self.key)
@@ -57,12 +59,11 @@ class Wallet:
         not_my_output = []
         spended = []
 
+        # track output index
+        i = 0
 
         # find usable outputs
         for tx in usable_tx:
-
-            # track output index
-            i = 0
 
             # break when amount is fullfilled
             if current_sum >= amount:
