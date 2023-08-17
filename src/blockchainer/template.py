@@ -9,11 +9,9 @@ import json
 # ################## Transaction
 class Transaction:
 
-    def __init__(self, inputs, signature, amount, receiver, outputs=[], spended=[]):
+    def __init__(self, inputs, signature, amount, receiver, outputs=[]):
         self.transaction = {}
         self.transaction['inputs'] = inputs
-
-        self.transaction['u_inputs'] = spended
 
         self.transaction['sign'] = signature[:12]
 
@@ -78,7 +76,6 @@ class Block:
             'previous_block_hash':str(prev_block_hash)[:12],
             'timestamp' : datetime.timestamp(datetime.now()),
             'difficulty_target' : difficulty,
-            'merkle_root' : self.get_merkle_root(),
             'nonce' : 0
         }
 
@@ -88,8 +85,3 @@ class Block:
 
     def get_block(self):
         return {'header':{**self.header}, 'body':{**self.body}}
-    
-    
-    def get_merkle_root(self):
-        # find the merkle root of the transactions
-        return '57304'

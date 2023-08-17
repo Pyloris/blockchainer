@@ -85,13 +85,14 @@ class Wallet:
 
             # add the transactions used into
             # this list
+            self.miner.remove_tx(tx['hash_id'])
             my_tx.append(tx['hash_id'])
         
         if current_sum < amount:
             raise LowBalance(current_sum)
 
             
-        tx = Transaction(my_tx, sign(self.address), amount, address, outputs=not_my_output, spended=spended)
+        tx = Transaction(my_tx, sign(self.address), amount, address, outputs=not_my_output)
 
         ch_amount = current_sum - amount
 
@@ -100,3 +101,8 @@ class Wallet:
             tx.get_change(ch_amount, self.address)
         
         return tx
+
+
+    # connect to miner back
+    def connect(self, miner):
+        self.miner = miner

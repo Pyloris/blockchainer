@@ -1,6 +1,7 @@
 from blockchainer.template import Transaction
 from blockchainer.wallet.signer import verify_sign
 from blockchainer.node.blockchain import Blockchain
+from blockchainer.errors import ReferenceNotFound
 from .consensus import PoW
 
 
@@ -16,7 +17,6 @@ class Miner:
 
     def mine(self, block):
         self.block = block
-
         # add coinbase tx
         self.block['body']['tx'].append(Transaction.get_base_tx(6.25, self.wallet.address))
 
@@ -29,29 +29,32 @@ class Miner:
 
     # receive trasaction to pool
     def add_to_pool(self, tx):
-        tx = tx.get_tx()
-        sign = tx['sign']
+        self.pool.append(tx)
+    
 
-        for tx_hash in tx['inputs']:
+    # remove transaction from utxo
+    def remove_tx(self, tx_hash):
 
             if tx_hash in self.blockchain.utxo.keys():
                 self.blockchain.rm_tx_from_utxo(tx_hash)
+                print("[REMOVED] "+tx_hash)
             else:
-                print("WRONG INPUTS")
-        # appended to pool
-        self.pool.append(tx)
+                raise ReferenceNotFound(tx)
+        
 
     # return pool transactions 10 at a time
     def flush_pool(self):
 
-        flushed = self.pool[:10]
-        self.pool = self.pool[10:]
-
         if len(self.pool) <= 10:
-            return flushed
+            flushed = self.pool.copy()
+            self.pool.clear()
         else:
-            return self.pool[:10]
+            flushed = self.pool[:10]
+            self.pool = self.pool[10:]
+
+        return flushed
         
     
     def wallet(self, wallet):
         self.wallet = wallet
+        wallet.connect(self)

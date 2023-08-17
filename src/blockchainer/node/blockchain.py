@@ -66,3 +66,4 @@ class Blockchain:
         # console.print("NET VALUE : "+str(self.net_value))
 
         console.print(self.blockchain)
+        console.print(self.utxo)

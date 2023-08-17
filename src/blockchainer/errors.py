@@ -19,3 +19,15 @@ class WrongSignature(Exception):
         self.message = message
 
         super().__init__(self.message)
+
+
+# exception when a reference to the output
+# is not found in the UTXO
+class ReferenceNotFound(Exception):
+    "Raised when a reference to the transaction is not found in UTXO"
+
+    def __init__(self, transaction, message='Output not found in UTXO'):
+        self.tx = transaction
+        self.message = message
+
+        super().__init__(self.message)
